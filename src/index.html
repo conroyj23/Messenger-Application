@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html>
+     
+<head>
+        <meta charset="UTF-8">
+        
+        <link rel="stylesheet" type="text/css" href="frontend_style.css" />
+    </head>
+
+<body>
+    <div id="head">
+        <div id ="logo"> <img width="35%" height="35%" src="https://i.ibb.co/mR3QLKD/boop.png" onclick="audio.play()"> </div>
+    </div>
+    <script>
+        const audio = new Audio();
+        audio.src = "https://trello.com/1/cards/61a807af658bee47de14efba/attachments/61a807bea8c41328874c6ca5/download/yt1s.com_-__I_Love_You_Man_Clip_Superbad_2007__IMDb_CLIP-%5BAudioTrimmer.com%5D.mp3";    
+</script>
+    <script src="/socket.io/socket.io.js"></script>
+    <!-- the main UI here -->
+    <div id="loginUI" class="lightmode2">
+        <div style="display:block;" id="loginScreen" class="lightmode2">
+            Please login first: <br>
+            <input type="text" id="username" placeholder="Enter your name ...">
+            <input type="password" id="password" placeholder="Password"
+            onkeydown = "checkEnter(event)">            
+            <button type="button" onclick="login()">JOIN</button>
+            <input type="checkbox" onclick="showPass()"> Show Password
+            <div id="invalidLoginDiv" style="color:red;font-size:20px;"></div>
+            <br><a href="#" onclick="showRegistrationScreen();hideLoginScreen()">
+            Do not have an account? Register here! </a>
+        </div>
+        
+        <div style="display:none;" id="registrationScreen"class="lightmode2">
+            Register your account: <br> <br>
+            Username must be at least 5 characters long <br>
+            Password must be 6 characters long and contain a digit, a lower case, and an upper case <br> <br>
+            <input type="text" id="newusername" placeholder="New Username">
+            <input type="password" id="newpassword" placeholder="New Password">
+            <button type="button"onclick="register()">Register User</button><br> <br>
+            <a href="#" onclick="hideRegistrationScreen();showLoginScreen()"> Login? </a>
+        </div>
+
+        <script>
+            var socketio = io();
+            function login() {
+                var username = document.getElementById('username').value;
+                var password = document.getElementById('password').value;
+
+                if (validatePassword(password) && validateUsername(username) && socketio){
+                    socketio.emit("login", username, password);
+                }
+                else{
+                    alert("Invalid Login. Please Try again or if you are new register an account");
+                }
+            }
+            function checkEnter(event){
+                if(event.key === "Enter") login()
+            }
+            function validateUsername(username){
+                return (username && username.length > 4);
+            }
+            function validatePassword(password){
+                //a validation requiring the password must be 6 chars or longer
+                //must contain at least one digit, one lower case, and one UPPERCASE
+                return /(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}/.test(password); 
+            }
+            socketio.on("Welcome", (welcomemessage) => {
+                document.getElementById('messages').innerHTML += welcomemessage + "<br>";
+            });
+            socketio.on("authenticated", () => {
+                document.getElementById("loginUI").style.display = "none";
+                document.getElementById("invalidLoginDiv").style.display = "none";
+                document.getElementById("boopBuddy").style.display = "block";
+                document.getElementById("landingUI").style.display = "block";
+                document.getElementById("chatUI").style.display = "none";
+                document.getElementById("friendUI").style.display = "none";
+                document.getElementById('welcomemessagediv').innerHTML +=
+                    "You are successfully logged in! You can start chatting now.<br>";
+                document.getElementById("loggedInUI").style.display = "block";
+                document.getElementById("friendUI").style.display = "block";
+                document.getElementById("usersUI").style.display = "block";
+            });
+            socketio.on("invalidLogin", () => {
+                document.getElementById("invalidLoginDiv").innerHTML = "Invalid Login - Please try again.";
+                //setTimeout(function(){document.getElementById("invalidLoginDiv").innerHTML = "<br>";},5000);
+            });
+            socketio.on("duplicateLogin", () => {
+                document.getElementById("invalidLoginDiv").innerHTML = "Duplicate Login - Client already logged in.";
+                //setTimeout(function(){document.getElementById("invalidLoginDiv").innerHTML = "<br>";},5000);
+            });
+
+            //CHAT HISTORY IMPLEMENTATION ATTEMPT
+            socketio.on("chat_history",(chat_history) => {
+            //debug if needed: e.g., JSON.stringify(chat_history))
+                if(chat_history && chat_history.length > 0){
+                    for(let index in chat_history){
+                        let chatmessage = chat_history[index].message;
+                        let time = chat_history[index].chat_time;
+                        document.getElementById('messages').innerHTML+="(" + time + ") " + chatmessage + "<br>";
+                    }
+                }
+            });
+
+            function register(){
+                var username = document.getElementById('newusername').value;
+                var password = document.getElementById('newpassword').value;
+                //TODO: validate username/password
+                if(validatePassword && validateUsername){
+                    socketio.emit("register",username,password);
+                }
+                else if(validatePassword == false || !validateUsername == false){
+                    alert("Invalid Registration! Username must be at least 5 characters long." + "\n Password must  contain at least one digit, one lower case, and one UPPERCASE");
+                }
+            }
+            function showPass() {
+                var x = document.getElementById("password");
+                if (x.type === "password") {
+                    x.type = "text";
+                } else {
+                    x.type = "password";
+                }
+            }
+
+            socketio.on("registration", (result) => {
+                var username = document.getElementById('newusername').value;
+                if(result==="Success"){
+                    alert("New account created with username: " + username + "\nYou can login now!");
+                    hideRegistrationScreen();
+                    showLoginScreen();
+                    return
+                }
+                if(result==="UserExist"){
+                    alert("Username '" + username + "' exists. Please try again!" );
+                }else{
+                    alert("User registration error. Please try again!" );
+                }
+                document.getElementById('newusername').value="";
+                document.getElementById('newpassword').value="";
+                document.getElementById('newusername').focus();
+            })
+            function hideRegistrationScreen(){
+                var registrationScreen = document.getElementById("registrationScreen");
+                registrationScreen.style.display = "none";//"block" is to display
+            }
+            function showRegistrationScreen(){
+                var registrationScreen = document.getElementById("registrationScreen");
+                registrationScreen.style.display = "block";//"none" is to hide
+            }
+            function hideLoginScreen(){
+                var loginScreen = document.getElementById("loginScreen");
+                loginScreen.style.display = "none";//"block" is to display
+            }
+            function showLoginScreen(){                
+                var loginScreen = document.getElementById("loginScreen");
+                loginScreen.style.display = "block";//"none" is to hide
+            }
+        </script>
+        <br>
+    </div>
+
+    
+    <div id="loggedInUI" style ="display:none;" class="lightmode2">
+        <span id="top"></span>
+        <button onClick="window.location.reload();">Logout</button>
+        <script>
+            socketio.on("loggedin", (loggedinmessage) => {
+                document.getElementById('top').innerHTML = loggedinmessage;
+            }); 
+        </script>        
+    </div>
+    
+    <div id= "landingUI" style = "display:none;" class="lightmode2"> <!-- landing UI is used to direct users to eother public or private chat-->
+        Choose a mode of chat:
+
+        <button type="button" onclick="pubChat()">Public</button>
+        <button type="button" onclick="privChat()">Private</button>
+        <button type="button" onclick="grpChat()">Group</button>
+        <button type="button" onclick="infoPage()">Info</button>
+
+        <script>
+            function pubChat(){// script to hide others pages and dislay the public chat content division
+                document.getElementById("chatUI").style.display = "block";
+                document.getElementById("friendUI").style.display = "block";
+                document.getElementById("privateUI").style.display = "none";
+                document.getElementById("infoUI").style.display = "none";
+
+                document.getElementById("groupUI").style.display = "none";
+                document.getElementById("groupHub").style.display = "none";
+                document.getElementById("addMemberToGroup").style.display = "none";
+                document.getElementById("joinGroup").style.display = "none";
+            }
+
+            function infoPage(){// script to hide others pages and dislay the public chat content division
+                document.getElementById("chatUI").style.display = "none";
+                document.getElementById("infoUI").style.display = "block";
+                document.getElementById("friendUI").style.display = "none";
+                document.getElementById("privateUI").style.display = "none";
+
+                document.getElementById("groupUI").style.display = "none";
+                document.getElementById("groupHub").style.display = "none";
+                document.getElementById("addMemberToGroup").style.display = "none";
+                document.getElementById("joinGroup").style.display = "none";
+            }
+
+            function privChat(){ // script to hide other pages and display private chat content div
+                document.getElementById("privateUI").style.display = "block";
+                document.getElementById("friendUI").style.display = "block";
+                document.getElementById("chatUI").style.display = "none";
+                document.getElementById("infoUI").style.display = "none";
+
+                document.getElementById("groupUI").style.display = "none";
+                document.getElementById("groupHub").style.display = "none";
+                document.getElementById("addMemberToGroup").style.display = "none";
+                document.getElementById("joinGroup").style.display = "none";
+            }
+
+            function grpChat(){// script to hide others pages and dislay the public chat content division
+                document.getElementById('gmessages').innerHTML = ""; //this is currently wiping the chat every time you hit the group chat button
+
+                document.getElementById("chatUI").style.display = "none";
+                document.getElementById("friendUI").style.display = "block";
+                document.getElementById("privateUI").style.display = "none";
+                document.getElementById("infoUI").style.display = "none";
+
+                document.getElementById("groupUI").style.display = "none";
+                document.getElementById("groupHub").style.display = "block";
+                document.getElementById("addMemberToGroup").style.display = "block";
+                document.getElementById("joinGroup").style.display = "block";
+
+            }
+        </script>
+    </div>
+    <div id="boopBuddy" style = display:none; class="lightmode2">
+        Boop Buddy
+        <button type="button" onclick = "boopBuddyRoll()">Roll</button>
+        <script>
+            function boopBuddyRoll(){
+                document.getElementById('boopBuddy').innerHTML = "";
+                socketio.emit("boop");
+                socketio.on("boopBuddy",(boopUser) =>{
+                document.getElementById('boopBuddy').innerHTML += "Your Boop Buddy is: " + boopUser + "<br>"; 
+                });               
+            }
+        </script>     
+    </div>    
+    <div id="friendUI" style ="display:none;" class="lightmode2"> <!-- interface to add other users as friends by username-->
+        Add User as Friend:
+        <input type="text" id="friendName" placeholder="Enter friend's username ...">
+        <button type="button" onclick="addFriend()">Add</button>
+
+        <script>            
+            function addFriend() { //sends friend request to the chatserver based on friends name
+                socketio.emit("friend", document.getElementById('friendName').value);
+            }
+            socketio.on("friend", (friendText) => {
+                document.getElementById('messages').innerHTML += friendText + "<br>";
+            });
+        </script>
+        <div id="friendName" class="lightmode2"></div>
+    </div>
+
+    <div id="infoUI" style ="display:none;" class="lightmode2"> <!-- interface to add other users as friends by username-->
+        Add Additional Info:
+        <br>
+        Name:
+        <input type="text" id="inputName" placeholder="Enter your name ...">
+        <button type="button" onclick="addName()">Update</button>
+        <br>
+        Phone Number:
+        <input type="text" id="phoneNumber" placeholder="Enter your phone number ...">
+        <button type="button" onclick="addNumber()">Update</button>
+        <br>
+        Email:
+        <input type="text" id="email" placeholder="Enter your email account ...">
+        <button type="button" onclick="addEmail()">Update</button>
+        <script>
+            function addName() { //sends friend request to the chatserver based on friends name
+                socketio.emit("name", document.getElementById('inputName').value);
+            }
+            function addNumber() {
+                socketio.emit("phonenumber", document.getElementById('phoneNumber').value);
+            }
+            function addEmail() {
+                socketio.emit("email", document.getElementById('email').value);
+            }
+        </script>
+        <div id="friendName" class="lightmode2"></div>
+    </div>
+
+    <br>
+
+    <div id="chatUI" style="display:none;" class="lightmode2"> <!-- public chat user interface-->
+        <br>
+        <title>Public Chat</title>
+        <br>
+        <br>
+        Your Message:
+        <input type="text" id="message" onkeypress="entertoSend(event)" onkeyup="sendTyping()" required="" placeholder="Enter your message ..." onkeydown="checkEnterP(event)"/>
+        <button type="button" onclick="sendmessage()">Send</button>
+        <button type="button" onclick="clearmessage()">Clear Messages</button>
+
+        <script>
+            function checkEnterP(event){
+                if(event.key === "Enter") sendmessage()
+            }
+            function clearmessage(){ // script to clear the public chat message log
+                document.getElementById('messages').innerHTML = "";
+            }
+            function sendmessage() { //script that tells server to send message to public chat
+                socketio.emit("chat", document.getElementById('message').value);
+                document.getElementById('message').value ="";
+
+                document.getElementById("welcomemessagediv").style.display = "none";
+            }
+            socketio.on("chat", (chatmessage) => {
+                document.getElementById('messages').innerHTML += chatmessage + "<br>";                
+            });
+            socketio.on("disconnect", (disconnectmessage) => { //script that informs user in public chat log that a user has disconnected
+                document.getElementById('messages').innerHTML += disconnectmessage + "<br>";
+            });
+            
+            function sendTyping() {
+                socketio.emit("<TYPE>");
+                //console.log('Sent to server: <TYPE>');
+            }
+            //Typing Functionality Implementation // " is typing <span>.</span>"
+            socketio.on("<TYPING>", function(msg){
+                // document.getElementById("typing").innerHTML = sanitizeHTML(msg) + " is typing."
+                document.getElementById("typing").innerHTML = msg + " is typing..."
+                setTimeout(function(){document.getElementById("typing").innerHTML = "<br>";},3000);
+                //console.log('<TYPING>Received from server: ' + msg);
+            });
+         
+        </script>
+        <div id="welcomemessagediv"></div>
+        <br>
+        <div id="typing"></div>
+        <br>
+        <div id="messages"></div>
+    </div>
+
+    <div id="privateUI" style="display:none;" class="lightmode2"> 
+        <br>
+        <title>Private Chat</title>
+        <br>
+        <br>
+        Send private message to:
+        <input type="text" id="pusername" placeholder="Enter recipient">
+        <br>        
+        Your Message:
+        <input type="text" id="pmessage" onkeydown="checkEnterPC(event)" onkeyup="sendTyping()" required="" placeholder="Enter your message ..."/>
+        <button type="button" onclick="psendmessage()">Send</button>
+        <button type="button" onclick="pclearchat()">Clear Chat</button>
+        <script>
+             function checkEnterPC(event){
+                if(event.key === "Enter") psendmessage()
+            }
+            function pclearchat(){
+                document.getElementById('pmessages').innerHTML = "";
+            }
+            function psendmessage() {
+                socketio.emit("pchat", document.getElementById('pmessage').value, document.getElementById('pusername').value);
+                document.getElementById('pmessage').value ="";
+
+                document.getElementById("pwelcomemessagediv").style.display = "none";
+            }
+            socketio.on("pchat", (chatmessage) => {
+                document.getElementById('pmessages').innerHTML += chatmessage + "<br>";                
+            });
+            socketio.on("disconnect", (disconnectmessage) => {
+                document.getElementById('pmessages').innerHTML += disconnectmessage + "<br>";
+            });
+            
+            function sendTyping() {
+                socketio.emit("<TYPE>");
+                //console.log('Sent to server: <TYPE>');
+            }
+            //Typing Functionality Implementation // " is typing <span>.</span>"
+            socketio.on("<TYPING>", function(msg){
+                // document.getElementById("typing").innerHTML = sanitizeHTML(msg) + " is typing."
+                document.getElementById("ptyping").innerHTML = msg + " is typing..."
+                setTimeout(function(){document.getElementById("ptyping").innerHTML = "<br>";},1000);
+                //console.log('<TYPING>Received from server: ' + msg);
+            });          
+
+            //CHAT HISTORY IMPLEMENTATION ATTEMPT
+            socketio.on("private_chat_history",(private_chat_history) => {
+            //debug if needed: e.g., JSON.stringify(private_chat_history))
+                if(private_chat_history && private_chat_history.length > 0){
+                    for(let index in private_chat_history){
+                        let chatmessage = private_chat_history[index].message;
+                        let time = private_chat_history[index].chat_time;
+                        document.getElementById('pmessages').innerHTML+="(" + time + ") " + chatmessage + "<br>";
+                    }
+                }
+            });
+        </script>
+        <div id="pwelcomemessagediv"></div>
+        <br>
+        <div id="ptyping"></div>
+        <br>
+        <div id="pmessages"></div>
+    </div>
+
+    <!-- BEGIN GROUP CHAT FUNCTIONALITY -->
+
+    <!-- CREATING A GROUP CHAT - GROUP CHAT DEBUG DIV AT TOP -->
+    <div id="groupHub" style="display:none;" class="lightmode2">
+    
+        <div id="groupChatDebug"></div>
+    
+    <title>Group Chat</title>
+    Create new group chat:
+    <input type="text" id="gName" placeholder="Group Chat Name" onkeydown="checkEnterC(event)">
+    <button type="button" onclick="createGroup()">Create</button>
+    <script>
+        function checkEnterC(event){
+                if(event.key === "Enter") createGroup()
+            }
+        function createGroup(){
+            var groupName = document.getElementById('gName').value;
+            socketio.emit("createGroup", groupName);
+            socketio.emit("getGroupChats");
+        }
+
+        socketio.on("gcDebug",(debugMessage) => {
+                document.getElementById('groupChatDebug').innerHTML = debugMessage;
+        });
+    </script>
+    </div>
+
+    <!-- ADDING MEMBER TO GROUP -->
+    <div id="addMemberToGroup" style = "display:none;" class="lightmode2">
+        Add member:
+        <input type="text" id="memberName" placeholder="Member Name">
+        To group:
+        <input type="text" id="groupChatName" placeholder="Group Chat Name" onkeydown="checkEnterA(event)">
+        <button type="button" onclick="addUsertoGroup()">Add</button>
+        
+        <script>
+            function checkEnterA(event){
+                if(event.key === "Enter") addUsertoGroup()
+            }
+            function addUsertoGroup(){
+                var groupChatName = document.getElementById('groupChatName').value;
+                var memberName = document.getElementById('memberName').value;
+                socketio.emit("addMember", groupChatName, memberName);
+            }
+        </script>
+    </div>
+
+    <!-- JOINING A GROUP -->
+    <div id="joinGroup" style = "display:none;" class="lightmode2">
+        Your Group Chats: 
+        <script>
+            socketio.emit("getGroupChats");
+            socketio.on("displayGroupChats",(chatList) => {
+                document.getElementById('chatList').innerHTML = chatList + "<br>";
+            });
+        </script>
+        <div id="chatList"></div>
+        Enter Group Chat Room:
+        <input type="text" id="gChatName" placeholder="Group Chat Name" onkeydown="checkEnterJ(event)">
+        <button type="button" onclick="enterGroupChat()">Join</button>
+        <script>
+            function checkEnterJ(event){
+                if(event.key === "Enter") enterGroupChat()
+            }
+            function enterGroupChat(){
+                var gChatName = document.getElementById('gChatName').value;                
+                socketio.emit("isUserInGroup", gChatName);                
+                socketio.on("userInGroup",(inGroup) => {
+                    if (inGroup){
+                        document.getElementById("groupUI").style.display = "block";
+                        document.getElementById("groupHub").style.display = "none";
+                        document.getElementById("addMemberToGroup").style.display = "block";
+                        document.getElementById("joinGroup").style.display = "none";
+                    }
+                });
+            }
+        </script>
+    </div>
+
+    <!-- GROUP CHAT ROOM -->
+    <div id="groupUI" style="display:none;" class="lightmode2">
+        <title>Group Chat</title>
+        Your Message:
+        <input type="text" id="gmessage" onkeydown="checkEnterG(event)" onkeyup="sendTyping()" required="" placeholder="Enter your message ..."/>
+        <button type="button" onclick="gsendmessage()">Send</button>
+        <button type="button" onclick="gclearchat()">Clear Chat</button>
+        <script>
+            function checkEnterG(event){
+                if(event.key === "Enter") gsendmessage()
+            }
+            function gclearchat(){
+                document.getElementById('gmessages').innerHTML = "";
+            }
+            function gsendmessage() {
+                socketio.emit("gchat", document.getElementById('gmessage').value);
+                document.getElementById("gwelcomemessagediv").style.display = "none";
+                document.getElementById('gmessage').value ="";
+            }
+            socketio.on("grpchat", (chatmessage) => {
+                document.getElementById('gmessages').innerHTML += chatmessage + "<br>";                
+            });
+            socketio.on("disconnect", (disconnectmessage) => {
+                document.getElementById('gmessages').innerHTML += disconnectmessage + "<br>";
+            });
+            function sendTyping() {
+                socketio.emit("<TYPE>");
+            }
+            socketio.on("<TYPING>", function(msg){
+                // document.getElementById("typing").innerHTML = sanitizeHTML(msg) + " is typing."
+                document.getElementById("gtyping").innerHTML = msg + " is typing..."
+                setTimeout(function(){document.getElementById("gtyping").innerHTML = "<br>";},1000);
+            });    
+
+            //CHAT HISTORY IMPLEMENTATION ATTEMPT
+            socketio.on("group_chat_history",(group_chat_history) => {
+            //debug if needed: e.g., JSON.stringify(group_chat_history))
+                if(group_chat_history && group_chat_history.length > 0){
+                    for(let index in group_chat_history){
+                        let chatmessage = group_chat_history[index].message;
+                        let time = group_chat_history[index].chat_time;
+                        document.getElementById('gmessages').innerHTML+="(" + time + ") " + chatmessage + "<br>";
+                    }
+                }
+            });
+        </script>
+        <div id="gwelcomemessagediv"></div> <br>
+        <div id="gtyping"></div> <br>
+        <div id="gmessages"></div>
+    </div>
+    <br>
+
+    <!-- END GROUP CHAT FUNCTIONALITY -->
+
+    <div id="usersUI" style = "display:none;" class="lightmode2">
+    Online Users: <br>
+
+        <script>
+            socketio.on("Display userList",(userList) => {
+            document.getElementById('display users').innerHTML = userList + "<br>";
+            });
+        </script>
+    
+        <div id="display users"></div>
+
+    </div>
+
+    <div id= "colorModeUI" style = "display:block;"> <!-- landing UI is used to direct users to eother public or private chat-->
+        Choose a mode of chat:
+
+        <button type="button" onclick="darkmode()">Darkmode</button>
+        <button type="button" onclick="lightmode()">Lightmode</button>
+
+        <script>
+            function darkmode(){// script to hide others pages and dislay the public chat content division
+                var element = document.body;
+                var chUI = document.getElementById("chatUI");
+                var logUI = document.getElementById("loginUI");
+                var frUI = document.getElementById("friendUI");
+                var infUI = document.getElementById("infoUI");
+                var invUI = document.getElementById("invalidLoginDiv");
+                var landUI = document.getElementById("landingUI");
+                var logScreen = document.getElementById("loginScreen");
+                var regScreen = document.getElementById("registrationScreen");
+                var privUI = document.getElementById("privateUI");
+                var usUI = document.getElementById("usersUI");
+                var grouUI = document.getElementById("groupUI"); //Group Chat Functionality
+                //var addgr = document.getElementById("addGroup"); //Outdated
+                var grouHub = document.getElementById("groupHub"); //Group Chat Functionality
+                var loggUI = document.getElementById("loggedInUI");
+                var addMem = document.getElementById("addMemberToGroup"); //Group Chat Functionality
+                var joinG = document.getElementById("joinGroup"); //Group Chat Functionality
+                
+                //<!-- groupHub, addMemberToGroup, joinGroup, groupUI -->
+
+                element.className = "darkmode1";
+                privUI.className = "darkmode2";
+                logScreen.className = "darkmode2";
+                infUI.className = "darkmode2";
+                regScreen.className = "darkmode2";
+                landUI.className = "darkmode2";
+                invUI.className = "darkmode2";
+                frUI.className = "darkmode2";                
+                logUI.className = "darkmode2";
+                chUI.className = "darkmode2";
+                usUI.className = "darkmode2";
+                grouUI.className = "darkmode2"; //Group Chat Functionality
+                //addgr.className = "darkmode2"; //unused
+                grouHub.className = "darkmode2"; //Group Chat Functionality
+                loggUI.className = "darkmode2";
+                addMem.className = "darkmode2"; //Group Chat Functionality
+                joinG.className = "darkmode2"; //Group Chat Functionality
+                
+
+            }
+            function lightmode(){// script to hide others pages and dislay the public chat content division
+                var element = document.body;
+                var chUI = document.getElementById("chatUI");
+                var privUI = document.getElementById("privateUI");
+                var infUI = document.getElementById("infoUI");
+                var logUI = document.getElementById("loginUI");
+                var logScreen = document.getElementById("loginScreen");
+                var regScreen = document.getElementById("registrationScreen");
+                var frUI = document.getElementById("friendUI");
+                var usUI = document.getElementById("usersUI");
+                var invUI = document.getElementById("invalidLoginDiv");
+                var landUI = document.getElementById("landingUI");
+                var grouUI = document.getElementById("groupUI");//Group Chat Functionality
+                //var addgr = document.getElementById("addGroup");//unused
+                var grouHub = document.getElementById("groupHub");//Group Chat Functionality
+                var loggUI = document.getElementById("loggedInUI");
+                var addMem = document.getElementById("addMemberToGroup");//Group Chat Functionality
+                var joinG = document.getElementById("joinGroup");//Group Chat Functionality
+
+
+                //<!-- groupHub, addMemberToGroup, joinGroup, groupUI -->
+                
+                var element = document.body;
+                privUI.className = "lightmode2";
+                element.className = "lightmode1";
+                logScreen.className = "lightmode2";
+                usUI.className = "lightmode2"
+                regScreen.className = "lightmode2";
+                infUI.className = "lightmode2";
+                invUI.className = "lightmode2";
+                frUI.className = "lightmode2";
+                logUI.className = "lightmode2";
+                chUI.className = "lightmode2";
+                landUI.className = "lightmode2";
+                grouUI.className = "lightmode2";//Group Chat Functionality
+                //addgr.className = "lightmode2"; //unused
+                grouHub.className = "lightmode2";//Group Chat Functionality
+                loggUI.className = "lightmode2";
+                addMem.className = "lightmode2";//Group Chat Functionality
+                joinG.className = "lightmode2";//Group Chat Functionality
+            }
+
+        </script>
+    </div>
+
+</body>
+
+</html>
