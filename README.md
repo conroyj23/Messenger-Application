@@ -294,15 +294,19 @@ Group Chat
 Frontend: Group Chat consists of 4 divs, a div for creating group chats and displaying debug information, a div for adding members to a group, a div for joining a group, and a div for the chatroom.
 
 ![groupHub](https://i.ibb.co/FKwqt7n/1-group-Hub.png)
+
 The groupHub div has an input and button for creating groups, as well as a div for displaying server messages.
 
 ![addMemberToGroup](https://i.ibb.co/CMcJ5yc/2-add-Member-To-Group.png)
+
 The addMemberToGroup div has 2 inputs and a button for adding a particular member to a particular group.
 
 ![joinGroup](https://i.ibb.co/QHM3Zhp/3-join-Group.png)
+
 The joinGroup div has a chatList div which displays the group chats a user belongs to, and has an input and button to join a particular group chat, if they are a member.
 
 ![groupUI](https://i.ibb.co/MfpMnZ5/4-group-UI.png)
+
 The groupUI div contains the actual group chatroom. It contains a chat input field as well as a send and clear chat button. Its functions include typing, disconnect, and chat notifications.
 
 
@@ -310,36 +314,47 @@ The groupUI div contains the actual group chatroom. It contains a chat input fie
 Backend: Group Chat uses 5 socketclient.on() functions, and 6 general functions. A group is an object with two variables: name & members[]. The server has a groupList[] variable to track the groups being created, and each socket has a groups[] and currentGroup variable to track which groups a user belongs to, and which group chat they are currently in.
 
 ![createGroup](https://i.ibb.co/P54m83R/1-create-Group.png)
+
 Given a group name, calls the createGroupChat function, afterward a socket now is a member of the group, the group has been added to their groups[], and the group has been added to groupList[].
 
 ![addMember](https://i.ibb.co/Lx81rGZ/2-add-Member.png)
+
 Given a groupName and memberName, the function checks whether both the member and group exists. If so, the desired group object is passed to the addToGroupChat function, along with the member's name.
 
 ![getGroupChats](https://i.ibb.co/dfBtwX4/3-get-Group-Chats.png)
+
 This on() function emits a displayGroupChats() call to return a list of groups that a socket belongs to, to be displayed in the frontend. 
 
 ![isUserInGroup](https://i.ibb.co/x5hFQ3w/4-is-User-In-Group.png)
+
 This on() function returns T/F whether the desired group exists, and if the user belongs to this group. If true, also sets desired group as a user's currentGroup.
 
 ![gChat](https://i.ibb.co/vLR1S8p/5-gChat.png)
+
 This on() function is responsible for sending messages to each member in the group. It also makes sure to not send a message to someone in the group that has disconnected.
 
 ![createGroupChat](https://i.ibb.co/Sm5y1bk/1-create-Group-Chat.png)
+
 This function checks whether the given group name already exists. If not, then a group object is created. The creator is immediately added to the group's members, and the group is added to the creator's groups[]. The group's name is also added to groupList[].
 
 ![addToGroupChat](https://i.ibb.co/TLp6SJM/2-add-To-Group-Chat.png)
+
 This function checks if a member is already in a group. If not, the member is added to the group's members[], and the group object is added to the member's groups[]. The member will now see the group in their groupList, and the creator will be notified they added the member.
 
 ![addGroupToGroups](https://i.ibb.co/tQ1QvkW/3-add-Group-To-Groups.png)
+
 This function checks whether a member is already in a group. If so, the group will be overwritten with the new members[] variable. If not, the group will be added onto the member's groups[]/
 
 ![hasGroup](https://i.ibb.co/Vv84BqM/4-has-Group.png)
+
 This function returns T/F whether a member is part of a group or not.
 
 ![overwriteGroup](https://i.ibb.co/M13vVjN/5-overwrite-Group.png)
+
 This function finds the desired group in a member's groups[], and overwrites it with the updated version of that group.
 
 ![getMemberSocket](https://i.ibb.co/gzFFjBm/6-get-Member-Socket.png)
+
 This function is given a socket username and returns its socket
 
 
@@ -352,30 +367,39 @@ Backend and Frontend: These functions were added into the index, ChatServer and 
 
 
 ![storeLoadPublicChat](https://i.ibb.co/pKT5Pn3/1.png)
+
 The storePublicChat method stores public chat messages in the database with their relevant data, such as receiver, timestamp, time, and the message. The loadChatHistory method loads public chat messages previously stored in the database into the html, displaying the time and chat message.
 
 ![storeLoadPrivateChat](https://i.ibb.co/Y3LnR6L/2.png)
+
 The storePrivateChat method stores private chat messages in the database with their relevant data, such as receiver, timestamp, time, and the message. The loadPrivateChatHistory method loads private chat messages previously stored in the database into the html, displaying the time and chat message.
 
 ![storeLoadGroupChat](https://i.ibb.co/f9vsKvX/3.png)
+
 The storeGroupChat method stores Group chat messages in the database with their relevant data, such groupName, timestamp, time, and the message. The loadGroupChatHistory method loads group chat messages previously stored in the database into the html, displaying the time and chat message.
 
 ![loadChatinChatServer](https://i.ibb.co/XVz1p7h/4.png)
+
 This method calls the loadChatHistory method with a username, and returns the relevant chat history and emits to the index.html file.
 
 ![loadChatinIndex](https://i.ibb.co/F5qWH6R/5.png)
+
 This is the code in the index.html file that is given the chat history and displays it in the html.
 
 ![XSSExample](https://i.ibb.co/WGcmrtw/6.png)
+
 The 3rd line in this screenshot shows the XSS prevention code which has been inserted all over our code. Anywhere a textbox allows input, and this input enters our code, this XSSFilter is inserted at the beginning of this text’s journey.
 
 ![encryptCheckLogin](https://i.ibb.co/B6vCr1G/7.png)
+
 The checkLogin method has been updated to verify that the username exists, then it returns true or false depending on if the encrypted password matches the plaintext password. 
 
 ![encryptRegistration](https://i.ibb.co/WzzVZSz/8.png)
+
 When registering a new account, the new password is encrypted through hashing before being stored in the database.
 
 ![pipeline](https://i.ibb.co/42Vs06z/9.png)
+
 This is the bitbucket-pipelines.yml file showing our successful implementation of Docker and the pipeline.
 
 
