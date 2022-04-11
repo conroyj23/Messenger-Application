@@ -42,7 +42,19 @@ Source code repository (private access): <https://bitbucket.org/cps490f21-team3/
 
 # Overview
 
-Our application is a messenger app that will allow users to create an account, login, and send messages to a single or multiple users — privately and publicly. Users will be able to add friends (or contacts) in order to communicate. They'll be able to send audio and images to each other while chatting. 
+Our application is a web-based messenger application that will allow users to: 
+1. Create an account
+	1. Login to an account
+2. Users can send:
+	1. Private messages 
+	2. Public messages
+	3. Group messages 
+3. Users can: 
+	1. Add friends to their account's friends list and view their friends list.	
+	3. Change their account information. 
+	4. Change the display theme of the page (Darkmode/Lightmode).
+	5. Clear the chatroom.
+	6. View the current user list, as well as the user's current group chatrooms.
 
 # System Analysis
 
@@ -56,7 +68,6 @@ Our application is a messenger app that will allow users to create an account, l
 - Users can delete messages
 - Users can create groups/rooms of desired recipients
 
-List high-level requirements of the project that your team will develop into use cases in later steps _(Main focus of Sprint 0)_
 
 ## Use cases
 
@@ -87,21 +98,16 @@ Show Password:
 Toggle Darkmode/Lightmode:
 - User can select a button to toggle between lightmode and darkmode for all UI
 
-_Draw the overview use case diagram, and define brief use case description for each use case (Main focus of Sprint 0)_
-
 
 # System Design
 
 ![Interaction_Diagram](https://i.ibb.co/6PbsvBg/System-Design.png)
-_(Start from Sprint 1, keep updating)_
 
 ## Use-Case Realization
 
 ![Sprint-1 Use Cases](https://i.gyazo.com/573da3ee2c50598b6f2361bc9a55a686.png)
 
-## Database 
-
-_(Start from Sprint 3, keep updating)_
+## Database
 
 ## User Interface
 
@@ -153,11 +159,7 @@ Chat Page:
 	
 	-Has a CLEAR MESSAGES button
 
-_(Start from Sprint 1, keep updating)_
-
 # Implementation
-
-_(Start from Sprint 1, keep updating)_
 
 0. For each new sprint cycle, update the implementation of your system (break it down into subsections). It is helpful if you can include some code snippets to illustrate the implementation
 
@@ -388,8 +390,6 @@ We deployed out application via Heroku. Heroku allows us to have our web applica
 
 # Software Process Management
 
-_(Start from Sprint 0, keep updating)_
-
 Jon Moran will serve as scrum manager this sprint. All use cases and tasks are on a trello board and we divided up the task so that everyone has something to complete each week. Everyday at our weekly meeting we discuss any stoppages or if any one needs any help completing their tasks.
 
 ![Trello](https://i.ibb.co/BGSGc7z/Software-Process-Management.png)
@@ -462,8 +462,6 @@ Duration: 09/09/2021 - 10-05-2021
 
 
 #### Sprint Retrospective:
-
-_(Introduction to Sprint Retrospective:
 
 Sprint 1 became a greater time crunch due to the increased workload from sprint 0 as well as busier schedules and time mismanagement. Fortunately, even through all of that adversity, our team was able to come together and dedicate important time to completing sprint 1. 
 Everyone worked together to fulfill their roles and the project progressed smoothly. We learned how through small feature additions, many unintentional bugs can be producted which is frustrating. 
