@@ -2,9 +2,6 @@
 
 Source: <https://bitbucket.org/capstones-cs-udayton/cps490/src/master/README.md>
 
-*NOTE*: _This is just a tentative template for your team to start working on sprint 0. It is a minimum requirement for your project final report and can be updated later.
-Your team can revise/add more sections, however, it is highly recommended to seek approval from the instructor for a pull request._
-
 University of Dayton
 
 Department of Computer Science
