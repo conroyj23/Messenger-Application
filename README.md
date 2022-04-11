@@ -1,7 +1,5 @@
 # README.md - CPS490 - Capstone I - Team 3
 
-Source: <https://bitbucket.org/capstones-cs-udayton/cps490/src/master/README.md>
-
 University of Dayton
 
 Department of Computer Science
@@ -36,21 +34,19 @@ Source code repository (private access): <https://bitbucket.org/cps490f21-team3/
 
 | Date     |   Version     |  Description |
 |----------|:-------------:|-------------:|
-|09/02/2021|  0.0          | Init draft   |
-|10/04/2021|  1.0          | Sprint1 draft|
-|10/27/2021|  2.0          | Sprint1 draft|
+|09/09/2021|  0.0          | Sprint0 Complete|
+|10/05/2021|  1.0          | Sprint1 Complete|
+|10/26/2021|  2.0          | Sprint2 Complete|
+|12/02/2021|  3.0          | Sprint3 Complete|
 
 
 # Overview
 
 Our application is a messenger app that will allow users to create an account, login, and send messages to a single or multiple users — privately and publicly. Users will be able to add friends (or contacts) in order to communicate. They'll be able to send audio and images to each other while chatting. 
-_(Start from Sprint 0, keep updating)_
 
 # System Analysis
 
 ![Architecture](https://i.ibb.co/XpDx0nR/boop-Architecture.png)
-
-_(Start from Sprint 0, keep updating)_
 
 ## User Requirements
 
@@ -430,8 +426,6 @@ Duration: 08/26/2021 - 09/09/2021
 
 #### Sprint Retrospective:
 
-_(Introduction to Sprint Retrospective:
-
 
 Sprint 0 was a really great experience for all of us. It not only introduced to Agile Development and how to plan/develop a sophisticated project, but it showed us how to be professionally organized and work as a group. We were very efficient in planning, but we fell through when it came to maintaining that energy towards progressivley putting out plan into action (except the presentation).
 Our retrospective meeting aided us in reflecting on our own indivudal performance through Sprint 0 and also our performance as a cooperative team. 
@@ -528,8 +522,6 @@ Latest Commit Link: https://bitbucket.org/cps490f21-team3/cps490-project-team3/c
 
 #### Sprint Retrospective:
 
-_(Introduction to Sprint Retrospective:
-
 Sprint 2 went a lot smoother in most aspects compared to previous sprints, but with midterms and busy schedules it was still hard to get to meet as often. We encountered multiple issues with the CSS; this included getting the external CSS to function properly and also our use case of darkmode/lightmode took a bit of debugging to get to work.
 However, regardless of the bugs and issues we were very successful in working productively and as a team to complete our tasks. Collaboration was important especially when we had to put our minds together to solve the functionality of adding a "group chat".
 
@@ -553,7 +545,6 @@ Functional
 4. Users can create and keep connections with other users, e.g., friendships
 5. Two addition requirements from your team
 	(a) Use case: "Boop Buddy" Feature - users get assigned another random user to chat with for the day
-	(b) Use case: ???????????
 Non-functional requirements
 1. The system must be secure and defend against simple web attacks
  - All data must be validated in all layers before sending/checking/forwarding
@@ -566,15 +557,13 @@ Non-functional requirements
 Latest Commit Link: https://bitbucket.org/cps490f21-team3/cps490-project-team3/commits/25d6d7bd4e00a9aa9819044fd39daaa29e7c21ad
 
 #### Contributions: 
-                               (NEED TO UPDATE ALL CONTRIBUTIONS)
+
 1.  Jon Moran, 8-10 hours, Product Owner, contributed in planning, documentation, use cases(logout functionality), the slides/presentation
 2.  John Conroy, 9-14 hours, Developer, contributed in planning, meeting scheduling, use cases(group chat functionality, DB login/authentication), the slides/presentation
 3.  James Oei, 9-14 hours, Developer, contributed in planning, system design, features, use cases(group chat functionality), the slides/presentation
 4.  Will Manzella, 9-14 hours, Scrum Master, contributed in planning, organization, CSS and UI, use cases(show password, darkmode/lightmode), the slides/presentation
 
 #### Sprint Retrospective:
-
-_(Introduction to Sprint Retrospective:
 
 Sprint 3 was a bit rushed. Many of us were dealing with illnesses throughout the Sprint which affected our productivity. As fas as the actual development process went this was by far the best we have worked together as a team. We knew what each of our strengths were and delegated work to the right individuals. We worked very well as a team which is a good sign for future projects that may come around.
 
@@ -586,9 +575,3 @@ Sprint 3 was a bit rushed. Many of us were dealing with illnesses throughout the
 
 -----------------------------------------------------------------------------
 
-
-# User guide/Demo
-
-Write as a demo with screenshots and as a guide for users to use your system.
-
-_(Start from Sprint 1, keep updating)_
